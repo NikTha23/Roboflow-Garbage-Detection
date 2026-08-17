@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Garbage Detection</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>♻️ AI Garbage Detection</h1>
+
+        <p>
+            Upload an image to detect garbage using
+            your Roboflow-trained model.
+        </p>
+
+
+        <form action="/predict"
+              method="POST"
+              enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="image"
+                accept="image/*"
+                required
+            >
+
+            <button type="submit">
+                Detect Garbage
+            </button>
+
+        </form>
+
+
+        {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        {% if image %}
+
+            <h2>Uploaded Image</h2>
+
+            <img
+                src="{{ url_for('uploaded_file', filename=image) }}"
+                class="uploaded-image"
+            >
+
+        {% endif %}
+
+
+        {% if predictions %}
+
+            <h2>Detection Results</h2>
+
+            {% for prediction in predictions %}
+
+                <div class="result">
+
+                    <p>
+                        <strong>Class:</strong>
+
+                        {{ prediction["class"] }}
+                    </p>
+
+                    <p>
+                        <strong>Confidence:</strong>
+
+                        {{ "%.2f"|format(
+                            prediction["confidence"] * 100
+                        ) }}%
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% elif image %}
+
+            <p class="no-result">
+                No garbage objects detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>
